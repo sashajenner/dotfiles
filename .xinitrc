@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set background image
-setbg $HOME/Pictures/backgrounds
+setbg /home/en0cs/Pictures/backgrounds
 
 # Connect to VPN
 piactl connect
