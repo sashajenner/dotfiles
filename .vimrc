@@ -4,7 +4,6 @@ let mapleader=","
 set tabstop=4
 set shiftwidth=4
 set expandtab
-imap <Tab> <Space><Space><Space><Space>
 
 "Map actual tab to Shift-Tab
 inoremap <S-Tab> <C-V><Tab>
@@ -56,7 +55,7 @@ set relativenumber
 set display+=lastline
 
 "Nice colour theme
-colo my-slate 
+colo my-slate
 
 "Don't wrap a line in the middle of a word
 set linebreak
@@ -86,9 +85,9 @@ nnoremap <leader>s :setlocal spell! spelllang=en_au<CR>
 hi SpellLocal ctermbg=208
 
 "Change where vim puts files
-set backupdir=~/.vim/backup//
-set directory=~/.vim/swap//
-set undodir=~/.vim/undo//
+set backupdir=$HOME/.vim/backup//
+set directory=$HOME/.vim/swap//
+set undodir=$HOME/.vim/undo//
 
 "Save vim history on exit
 " '10  :  marks will be remembered for up to 10 previously edited files
@@ -96,7 +95,7 @@ set undodir=~/.vim/undo//
 " :20  :  up to 20 lines of command-line history will be remembered
 " %    :  saves and restores the buffer list
 " n... :  where to save the viminfo files
-set viminfo='10,\"100,:20,%,n~/.viminfo  
+set viminfo='10,\"100,:20,%,n~/.viminfo
 
 ""Function that restores the cursor
 function! ResCur()
@@ -111,7 +110,7 @@ augroup resCur
   autocmd BufWinEnter * call ResCur()
 augroup END
 
-"Enable undo on return to vim 
+"Enable undo on return to vim
 set undofile
 
 "Add dictionary spelling to completion when spelling on
