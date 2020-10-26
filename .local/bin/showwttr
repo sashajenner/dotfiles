@@ -1,0 +1,40 @@
+#!/bin/sh
+# Show the current temperature with associated icon
+# and current wind speed with associated icon
+
+wttr=$(curl -sf wttr.in/Sydney?format='%t+%C+%w\n')
+
+# Curl didn't work
+if [ "$wttr" = "" ]; then
+    return 1
+fi
+
+temp=$(echo $wttr | awk '{print $1}')
+temp=${temp#"+"}
+if [ "$temp" = "Unknown" ]; then
+    return 1
+fi
+
+status=$(echo $wttr | awk '{for (i=2; i<NF; ++i) printf $i" "}')
+
+wind=$(echo $wttr | awk '{print $NF}')
+wind_dir=$(expr substr $wind 1 1)
+wind_speed=$(expr substr $wind 2 $(($(expr length $wind)-1)))
+
+if [ "$status" != "" ]; then
+    if echo $status | grep -Eiq "rain|shower|drizzle"; then
+        icon='☔'
+    elif echo $status | grep -Eiq "sun|clear"; then
+        icon='☀'
+    elif echo $status | grep -Eiq "cloud|overcast"; then
+        icon='☁'
+    elif echo $status | grep -Eiq "thunder|lightning"; then
+        icon='⚡'
+    elif echo $status | grep -Eiq "snow|hail|freeze|sleet|ice|icy"; then
+        icon='☃'
+    elif echo $status | grep -Eiq "mist|haze|fog"; then
+        icon='☷'
+    fi
+fi
+
+echo $icon $temp $wind_dir $wind_speed

@@ -1,0 +1,40 @@
+#!/bin/bash
+# Show the current volume level as a percentage to nearest even number with icon prepended
+# Or just icon with -q option
+
+raw_vol=$(awk -F"[][]" '/dB/ { print $2 }' <(amixer sget Master))
+raw_vol=${raw_vol%?}
+
+if [ $(( raw_vol % 2 )) -ne 0 ]; then
+    if [ $raw_vol -eq 1 ]; then
+        disp_vol=$(( raw_vol + 1 ))
+    else
+        disp_vol=$(( raw_vol - 1 ))
+    fi
+else
+    disp_vol=$raw_vol
+fi
+
+on_off=$(awk -F"[][]" '/dB/ { print $6 }' <(amixer sget Master))
+
+if [ "$on_off" = "off" ]; then
+    icon='m'
+elif [ $raw_vol = 100 ]; then
+    icon='^'
+elif [ $raw_vol = 0 ]; then
+    icon='.'
+elif [ "$1" != "-q" ]; then
+    if [ $raw_vol -le 33 ]; then
+        icon='♩'
+    elif [ $raw_vol -le 66 ]; then
+        icon='♪'
+    else
+        icon='♬'
+    fi
+fi
+
+if [ "$1" = "-q" ]; then
+    echo "$icon"
+else
+    echo "$icon $disp_vol%"
+fi

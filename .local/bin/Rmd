@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ "$2" = "" ]; then
+    Rscript -e "library('rmarkdown'); render('"$1"')"
+else
+    Rscript -e "library('rmarkdown'); render('"$1"', output_file = '"$2"')"
+fi

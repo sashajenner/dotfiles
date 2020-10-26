@@ -1,0 +1,7 @@
+#!/bin/sh
+# Show icon for night mode if on
+
+# Normal mode is off
+if xrandr --verbose | grep 'Gamma' | grep -qv '1.0:1.0:1.0'; then
+    echo '♞'
+fi

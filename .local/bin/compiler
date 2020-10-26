@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# This script will compile or run another finishing operation on a document. I
+# have this script run via vim.
+#
+# Compiles .tex, .rmd, .md, etc.  Opens .sent files as sent
+# presentations.  Runs scripts based on extension or shebang
+
+file=$(readlink -f "$1")
+dir=${file%/*}
+base="${file%.*}"
+ext=$([[ "$file" = *.* ]] && echo "${file##*.}" || echo '')
+
+case "$ext" in
+    c) out="$base" ;;
+    md)	out="$base".pdf ;;
+    [rR]md) out="$base".html ;;
+esac
+if [ "$2" = "tmp" ]; then
+    case "$ext" in
+        c) out="$base" ;;
+        md)	out="/tmp/vim-pandoc-out.pdf" ;;
+        [rR]md) out="/tmp/vim-rmd-out.html" ;;
+    esac
+fi
+
+cd "$dir" || exit 1
+
+case "$ext" in
+	c)
+        if [ -f "Makefile" ]; then
+            make
+        else
+            cc "$file" -o "$out" && "$out"
+        fi ;;
+	h) make ;;
+	md)	pandoc "$file" -V geometry:margin=1in -o "$out" ;;
+	py) python3 "$file" ;;
+    php) pkill php; st php -S localhost:8000 & ;;
+	[rR]md) Rmd "$1" "$out" ;;
+    [rR])
+        case "$base" in
+            *ui|*server) pkill shiny; setsid -f st R -e "shiny::runApp(port=8001)" ;;
+            *) Rscript "$file" ;;
+        esac ;;
+    sh) shellcheck "$file" && "$file" ;;
+	tex) pdflatex "$file" ;;
+    "") # No extension
+        case "$base" in
+            *Makefile) make ;;
+        esac ;;
+	*) sed 1q "$file" | grep "^#!/" | sed "s/^#!//" | xargs -r -I % "$file" ;; # Shebang
+esac

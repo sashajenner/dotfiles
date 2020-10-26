@@ -1,0 +1,35 @@
+#!/bin/sh
+# Set night mode on/off, or toggle it
+
+USAGE="Usage: $0 on|off|toggle"
+
+case "$1" in
+
+    # Turn on night mode
+    "on")
+        xrandr --output eDP-1 --gamma 1.1:0.8:0.7
+        ;;
+
+    # Turn off night mode
+    "off")
+        xrandr --output eDP-1 --gamma 1:1:1
+        ;;
+
+    # Toggle night mode
+    "toggle")
+        # Night mode is off
+        if xrandr --verbose | grep -q 'Gamma: *1.0:1.0:1.0'; then
+            xrandr --output eDP-1 --gamma 1.1:0.8:0.7
+        # Night mode is on
+        else
+            xrandr --output eDP-1 --gamma 1:1:1
+        fi
+        ;;
+
+    # Invalid argument
+    *)
+        echo $USAGE
+        exit 1
+esac
+
+exit 0

@@ -1,0 +1,19 @@
+#!/bin/sh
+# Show the surf size in Bondi in ft
+
+size=$(curl -sf https://www.coastalwatch.com/surf-cams-surf-reports/nsw/bondi-beach | grep -Eo -m1 "[0-9]+[ ]?[-]?[ ]?[0-9]?[ ]?ft[+]?")
+
+# Curl didn't work
+if [ "$size" = "" ]; then
+    return 1
+fi
+
+low=$(echo $size | awk '{print $1}')
+high=$(echo $size | awk '{print $3}')
+icon=⚓
+
+if [ "$high" != "" ]; then
+    echo $icon $low-${high}ft
+else
+    echo $icon ${low}ft
+fi

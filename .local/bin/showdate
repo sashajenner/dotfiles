@@ -1,0 +1,6 @@
+#!/bin/sh
+# Show the current date in format "⚑ Day num_day-Mon"
+# e.g. ⚑ Mon 3-Jul
+# e.g. ⚑ Sat 12-Dec
+
+date +'⚑ %a %-d-%b'

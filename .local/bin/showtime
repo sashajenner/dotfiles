@@ -1,0 +1,6 @@
+#!/bin/sh
+# Show the current time in the format "h:ms AM/PM"
+# e.g 9:32 PM
+# e.g 2:59 AM
+
+date +'%-I:%M %p'

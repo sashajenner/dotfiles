@@ -1,0 +1,57 @@
+#!/bin/sh
+# Change screen brightness
+# Arguments: up/down/min/max
+
+# How much to increase/decrease brightness by
+delta_br=100
+
+case "$1" in
+
+    # Increase brightness
+    up)
+        max_br=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+        curr_br=$(cat /sys/class/backlight/intel_backlight/brightness)
+
+        if [ $curr_br -lt $max_br ]; then
+            new_br=$(( curr_br + delta_br ))
+            if [ $new_br -gt $max_br ]; then
+                new_br=$max_br
+            fi
+
+            echo $new_br > /sys/class/backlight/intel_backlight/brightness
+        fi
+        ;;
+
+    # Decrease brightness
+    down)
+        curr_br=$(cat /sys/class/backlight/intel_backlight/brightness)
+
+        if [ $curr_br -gt 0 ]; then
+            new_br=$(( curr_br - delta_br ))
+            if [ $new_br -lt 0 ]; then
+                new_br=0
+            fi
+
+            echo $new_br > /sys/class/backlight/intel_backlight/brightness
+        fi
+        ;;
+
+    # Set minimum brightness
+    min)
+        min_br=1
+        echo $min_br > /sys/class/backlight/intel_backlight/brightness
+        ;;
+
+    # Set maximum brightness
+    max)
+        max_br=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+        echo $max_br > /sys/class/backlight/intel_backlight/brightness
+        ;;
+
+    # Invalid argument
+    *)
+        echo "Invalid argument: not 'up|down|max|min'"
+        exit 1
+esac
+
+exit 0

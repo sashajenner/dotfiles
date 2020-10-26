@@ -1,0 +1,11 @@
+#!/bin/sh
+# Show wifi percentage strength with icon
+
+on_off="$(cat /sys/class/net/w*/operstate)"
+
+if [ "$on_off" = "up" ]; then
+    icon='⚼'
+    strength=$(awk '/^\s*w/ { printf "%.1f", $3 / 70 }' /proc/net/wireless)
+
+    echo $icon $strength
+fi

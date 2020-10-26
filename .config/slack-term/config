@@ -1,0 +1,27 @@
+{
+    "slack_token": "xoxp-885561145361-1220863416112-1242929226117-6e1c8da6cf64b444f0d2951f76fd7c44",
+
+    "sidebar_width": 2,
+
+    "theme": {
+        "view": {
+            "fg": "red",
+            "bg": "default",
+            "border_fg": "green",
+            "border_bg": "",
+            "label_fg": "green,bold",
+            "label_bg": ""
+        },
+        "channel": {
+            "prefix": "",
+            "icon": "fg-green",
+            "text": "fg-cyan,fg-bold"
+        },
+        "message": {
+            "time_format": "02/01 15:04",
+            "name": "colorize",
+            "time": "bg-cyan,fg-black",
+            "text": ""
+        }
+    }
+}

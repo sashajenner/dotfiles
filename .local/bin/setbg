@@ -1,0 +1,12 @@
+#!/bin/sh
+# Usage: setbg [FILE/DIR]
+# Set the background to given file or a random file in given directory
+# Without any arguments the current directory is used
+
+if [ -d "$1" ]; then
+    file=$(ls $1/* | sort -R | head -1)
+else
+    file=$(ls $1 | sort -R | head -1)
+fi
+
+feh --no-fehbg --bg-scale "$file"
