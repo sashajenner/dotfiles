@@ -49,5 +49,6 @@ case "$ext" in
         case "$base" in
             *Makefile) make ;;
         esac ;;
-	*) sed 1q "$file" | grep "^#!/" | sed "s/^#!//" | xargs -r -I % "$file" ;; # Shebang
+	*) shellcheck "$file" &&
+       sed 1q "$file" | grep "^#!/" | sed "s/^#!//" | xargs -r -I % "$file" ;; # Shebang
 esac
