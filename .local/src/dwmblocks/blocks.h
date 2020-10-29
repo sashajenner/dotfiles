@@ -7,7 +7,7 @@ static const Block blocks[] = {
 	//{"",      "free -h | awk '/^Mem/ { print $3\"/\"$2 }' | sed s/i//g",	30,		0},
 
 	//{"",        "shownightmode",0,		            2}, // sig 2
-    {"",        "showvpn-wrapper",  0,                  2}, // sig 2
+    {"",        "showvpn-wrapper",  3600,               2}, // sig 2 and 1 hr
 	{"",        "showtime",	        30,		            0}, // 30 sec
 	{"",        "showvolume -q",	0,		            1}, // sig 1
 	//{"",        "showdate",	    300,		        0}, // 5 min
