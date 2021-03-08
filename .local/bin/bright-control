@@ -4,6 +4,7 @@
 
 # How much to increase/decrease brightness by
 delta_br=100
+delta_br_dual=0.01
 
 case "$1" in
 
@@ -11,46 +12,90 @@ case "$1" in
     up)
         max_br=$(cat /sys/class/backlight/intel_backlight/max_brightness)
         curr_br=$(cat /sys/class/backlight/intel_backlight/brightness)
+        max_br_dual=1
+        curr_br_dual=$(cat /home/en0cs/.local/share/brightness-dual)
 
-        if [ $curr_br -lt $max_br ]; then
+        if [ "$curr_br" -lt "$max_br" ]; then
             new_br=$(( curr_br + delta_br ))
-            if [ $new_br -gt $max_br ]; then
+            if [ "$new_br" -gt "$max_br" ]; then
                 new_br=$max_br
             fi
 
-            echo $new_br > /sys/class/backlight/intel_backlight/brightness
+            echo "$new_br" > /sys/class/backlight/intel_backlight/brightness
         fi
+
+        if ! awk 'BEGIN{exit ARGV[1]<ARGV[2]}' "$curr_br_dual" "$max_br_dual"; then
+            new_br_dual=$(echo "$curr_br_dual + $delta_br_dual" | bc )
+            if ! awk 'BEGIN{exit ARGV[1]>ARGV[2]}' "$new_br_dual" "$max_br_dual"; then
+                new_br_dual=$max_br_dual
+            fi
+
+            if /home/en0cs/.local/bin/night-mode get; then
+                xrandr --output DP-1 --brightness $new_br_dual
+            else
+                xrandr --output DP-1 --brightness $new_br_dual --gamma 1.1:0.8:0.7
+            fi
+            echo "$new_br_dual" > /home/en0cs/.local/share/brightness-dual
+        fi
+
         ;;
 
     # Decrease brightness
     down)
         curr_br=$(cat /sys/class/backlight/intel_backlight/brightness)
+        curr_br_dual=$(cat /home/en0cs/.local/share/brightness-dual)
 
-        if [ $curr_br -gt 0 ]; then
+        if [ "$curr_br" -gt 0 ]; then
             new_br=$(( curr_br - delta_br ))
-            if [ $new_br -lt 0 ]; then
+            if [ "$new_br" -lt 0 ]; then
                 new_br=0
             fi
 
-            echo $new_br > /sys/class/backlight/intel_backlight/brightness
+            echo "$new_br" > /sys/class/backlight/intel_backlight/brightness
         fi
+
+        if ! awk 'BEGIN{exit ARGV[1]>ARGV[2]}' "$curr_br_dual" 0; then
+            new_br_dual=$(echo "$curr_br_dual - $delta_br_dual" | bc )
+            if ! awk 'BEGIN{exit ARGV[1]<ARGV[2]}' "$new_br_dual" 0; then
+                new_br_dual=0
+            fi
+
+            if /home/en0cs/.local/bin/night-mode get; then
+                xrandr --output DP-1 --brightness $new_br_dual
+            else
+                xrandr --output DP-1 --brightness $new_br_dual --gamma 1.1:0.8:0.7
+            fi
+            echo "$new_br_dual" > /home/en0cs/.local/share/brightness-dual
+        fi
+
         ;;
 
     # Set minimum brightness
     min)
         min_br=1
-        echo $min_br > /sys/class/backlight/intel_backlight/brightness
+        min_br_dual=0.15
+        echo "$min_br" > /sys/class/backlight/intel_backlight/brightness
+        xrandr --output DP-1 --brightness "$min_br_dual"
+        echo "$min_br_dual" > /home/en0cs/.local/share/brightness-dual
         ;;
 
     # Set maximum brightness
     max)
         max_br=$(cat /sys/class/backlight/intel_backlight/max_brightness)
-        echo $max_br > /sys/class/backlight/intel_backlight/brightness
+        max_br_dual=1
+        echo "$max_br" > /sys/class/backlight/intel_backlight/brightness
+        xrandr --output DP-1 --brightness "$max_br_dual"
+        echo "$max_br_dual" > /home/en0cs/.local/share/brightness-dual
+        ;;
+
+    same)
+        curr_br_dual=$(cat /home/en0cs/.local/share/brightness-dual)
+        xrandr --output DP-1 --brightness "$curr_br_dual"
         ;;
 
     # Invalid argument
     *)
-        echo "Invalid argument: not 'up|down|max|min'"
+        echo "Invalid argument: not 'up|down|max|min|same'"
         exit 1
 esac
 

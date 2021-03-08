@@ -19,8 +19,9 @@ esac
 if [ "$2" = "tmp" ]; then
     case "$ext" in
         c) out="$base" ;;
-        md)	out="/tmp/vim-pandoc-out.pdf" ;;
-        [rR]md) out="/tmp/vim-rmd-out.html" ;;
+        md)	out="/tmp/vim-pandoc-out.pdf"
+            pres="/tmp/vim-pandoc-out-pres.pdf" ;;
+        [rR]md) out="/tmp/vim-rmd-out" ;;
     esac
 fi
 
@@ -34,7 +35,10 @@ case "$ext" in
             cc "$file" -o "$out" && "$out"
         fi ;;
 	h) make ;;
-	md)	pandoc "$file" -V geometry:margin=1in -o "$out" ;;
+	md)	pandoc "$file" -V geometry:margin=1in -o "$out"
+        if [ "$pres" != '' ]; then
+            pandoc "$file" -t beamer -o "$pres"
+        fi ;;
 	py) python3 "$file" ;;
     php) pkill php; st php -S localhost:8000 & ;;
 	[rR]md) Rmd "$1" "$out" ;;
@@ -44,7 +48,12 @@ case "$ext" in
             *) Rscript "$file" ;;
         esac ;;
     sh) shellcheck "$file" && "$file" ;;
-	tex) pdflatex "$file" ;;
+	tex)
+        if [ -f "Makefile" ]; then
+            make
+        else
+            xelatex "$file"
+        fi ;;
     "") # No extension
         case "$base" in
             *Makefile) make ;;

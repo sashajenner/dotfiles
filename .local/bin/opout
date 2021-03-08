@@ -8,23 +8,31 @@ basename="$(echo "$1" | sed 's/\.[^\/.]*$//')"
 
 case "$1" in
     *.html) out="$1" ;;
-	*.tex|*.m[des]|*.mom|*.[0-9]) out="$basename".pdf ;;
-    *.php) out="localhost:8000" ;;
-    ui.R|server.R) out="localhost:8001" ;;
-    *.[rR]md) out="$basename".html ;;
+	*.tex|*.m[des]|*.mom|*.[0-9]) out="$basename.pdf" ;;
+    *.php) out='localhost:8000' ;;
+    ui.R|server.R) out='localhost:8001' ;;
+    *.[rR]md) out="$basename.html" ;;
+    *.[rR]) out="Rplots.pdf" ;;
 esac
 
-if [ "$2" = "tmp" ]; then 
+if [ "$2" = 'tmp' ]; then
     case "$1" in
-        *.md) out="/tmp/vim-pandoc-out.pdf" ;;
-        *.[rR]md) out="/tmp/vim-rmd-out.html" ;;
+        *.md) out="/tmp/vim-pandoc-out$3.pdf" ;;
+        *.[rR]md) out="/tmp/vim-rmd-out$3." ;;
     esac
 fi
 
 case "$1" in
-	*.tex|*.m[des]|*.mom|*.[0-9]) 
+	*.tex|*.m[des]|*.mom|*.[0-9])
         setsid -f xdg-open "$out" >/dev/null 2>&1 ;;
-	*.html|*.php|*.[rR]md|ui.R|server.R) setsid -f "$BROWSER" "$out" >/dev/null 2>&1 ;;
+	*.html|*.php|ui.R|server.R) setsid -f "$BROWSER" "$out" >/dev/null 2>&1 ;;
 	*.sent) setsid -f sent "$1" >/dev/null 2>&1 ;;
-    *) setsid -f xdg-open "$1" ;;
+    *.[rR]) setsid -f zathura "$out" ;;
+    *.[rR]md) setsid -f xdg-open "$out"* ;;
+    *)
+        if [ "$out" != '' ]; then
+            setsid -f xdg-open "$out"
+        else
+            setsid -f xdg-open "$1"
+        fi ;;
 esac

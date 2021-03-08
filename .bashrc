@@ -18,6 +18,7 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
+export PROMPT_COMMAND='if [ "$(id -u)" -ne 0 ]; then echo "$(date "+%Y-%m-%d|%H:%M:%S") $(pwd) $(history 1)" >> ~/.logs/bash-history-$(date "+%Y-%m-%d").log; fi'
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -132,3 +133,21 @@ export EDITOR="vim"
 export TERMINAL="st"
 export BROWSER="qutebrowser"
 export READER="zathura"
+
+# Android Studio programs (required by React Native):
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# transfer.sh alias for sharing data
+transfer() {
+    curl --progress-bar --upload-file "$1" "https://free.keep.sh/$(basename "$1")" | tee /dev/null;
+    echo
+}
+
+alias transfer=transfer
+
+# Hidden credentials
+. ~/.hiddenrc

@@ -551,4 +551,3 @@ unsigned int fgCommandVisualLine = 232;
 
 unsigned int bgPos = 15;
 unsigned int fgPos = 16;
-

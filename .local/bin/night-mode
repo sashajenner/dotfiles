@@ -1,34 +1,48 @@
 #!/bin/sh
 # Set night mode on/off, or toggle it
 
-USAGE="Usage: $0 on|off|toggle"
+USAGE="Usage: $0 on|off|toggle|get"
+CURR_MODE='/home/en0cs/.local/share/night-mode'
 
 case "$1" in
 
     # Turn on night mode
     "on")
         xrandr --output eDP-1 --gamma 1.1:0.8:0.7
+        xrandr --output DP-1 --gamma 1.1:0.8:0.7 --brightness "$(cat /home/en0cs/.local/share/brightness-dual)"
+        echo 1 > $CURR_MODE
         ;;
 
     # Turn off night mode
     "off")
         xrandr --output eDP-1 --gamma 1:1:1
+        xrandr --output DP-1 --gamma 1:1:1 --brightness "$(cat /home/en0cs/.local/share/brightness-dual)"
+        echo 0 > $CURR_MODE
         ;;
 
     # Toggle night mode
     "toggle")
         # Night mode is off
-        if xrandr --verbose | grep -q 'Gamma: *1.0:1.0:1.0'; then
+        if [ "$(cat "$CURR_MODE")" -eq 0 ]; then
             xrandr --output eDP-1 --gamma 1.1:0.8:0.7
+            xrandr --output DP-1 --gamma 1.1:0.8:0.7 --brightness "$(cat /home/en0cs/.local/share/brightness-dual)"
+            echo 1 > $CURR_MODE
         # Night mode is on
         else
             xrandr --output eDP-1 --gamma 1:1:1
+            xrandr --output DP-1 --gamma 1:1:1 --brightness "$(cat /home/en0cs/.local/share/brightness-dual)"
+            echo 0 > $CURR_MODE
         fi
+        ;;
+
+    # Show current night mode
+    "get")
+        exit "$(cat "$CURR_MODE")"
         ;;
 
     # Invalid argument
     *)
-        echo $USAGE
+        echo "$USAGE"
         exit 1
 esac
 

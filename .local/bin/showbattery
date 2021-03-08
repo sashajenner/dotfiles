@@ -8,8 +8,8 @@ status=$(cat $dir_battery/status)
 
 if [ "$status" = "Charging" ]; then
     icon='⚡ '
-# elif [ $raw_battery -le 10 ]; then
-#     icon='☠'
+elif [ "$raw_battery" -le 10 ]; then
+    icon='!!! '
 # elif [ $raw_battery -le 30 ]; then
 #     icon='⚠'
 # elif [ "$status" = "Full" ]; then
@@ -20,10 +20,10 @@ fi
 
 if [ "$status" != "Full" ]; then
     time_str=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep time)
-    time=$(echo $time_str | awk '{printf "%d", $(NF-1)}')
-    unit=$(echo $time_str | awk '{print substr($NF, 1, 1)}')
-    echo $icon$raw_battery% $time$unit
+    time="$(echo "$time_str" | awk '{printf "%d", $(NF-1)}')"
+    unit="$(echo "$time_str" | awk '{print substr($NF, 1, 1)}')"
+    echo "$icon$raw_battery% $time$unit"
 else
-    echo $icon$raw_battery%
+    echo "$icon$raw_battery%"
 fi
 

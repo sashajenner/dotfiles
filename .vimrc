@@ -45,6 +45,9 @@ set nostartofline
 "Always display status line
 set laststatus=2
 
+"Add live word count to status line
+set statusline=%<%f\ %h%m%r%=%-14.(%{wordcount().words},%l,%c%V%)\ %P
+
 "Display cursor line number
 set number
 
@@ -129,9 +132,12 @@ set formatoptions+=roln
 
 " Compile document, be it LaTeX/markdown/etc.
 map <leader>c :w! \| !compiler <c-r>% tmp<CR>
+map <leader>C :w! \| !compiler <c-r>% <CR>
 
 " Open corresponding .pdf/.html or preview
 map <leader>, :!opout <c-r>% tmp<CR><CR>
+map <leader>. :!opout <c-r>% <CR><CR>
+map <leader>p :!opout <c-r>% tmp -pres<CR><CR>
 
 "Set tags file location
 set tags+=$HOME/.vim/tags
@@ -140,24 +146,31 @@ set tags+=$HOME/.vim/tags
 nnoremap <leader>t :!ctags -f ~/.vim/tags --tag-relative=yes -R ./*<CR>
 
 "Todo
-autocmd BufRead,BufNewFile .todo set autoindent
-autocmd BufRead,BufNewFile .todo set cursorline
+autocmd BufRead,BufNewFile .todo* set autoindent
+autocmd BufRead,BufNewFile .todo* set cursorline
 function! DoneToggle()
 	s/^\(\s*\)- /\1[@]/e 1
 	s/^\(\s*\)⚫/\1- /e 1
 	s/^\(\s*\)\[@\]/\1⚫/e 1
 endfunc
-autocmd BufRead,BufNewFile .todo nnoremap <CR> :call DoneToggle()<CR>:noh<CR>j$
+autocmd BufRead,BufNewFile .todo* nnoremap <CR> :call DoneToggle()<CR>:noh<CR>j$
 
 "Notepad
 autocmd BufRead,BufNewFile .notepad set autoindent
 autocmd BufRead,BufNewFile .notepad set cursorline
 
 "Markdown
-autocmd Filetype markdown set autoindent
-autocmd Filetype markdown set formatoptions+=roln
-autocmd Filetype markdown set com=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,b:-,b:+,b:*,b:1.5
+autocmd Filetype rmd,markdown set autoindent
+autocmd Filetype rmd,markdown set formatoptions+=roln
+autocmd Filetype rmd,markdown set com=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,b:-,b:+,b:*,b:1.
 
-"Automatically deletes all trailing whitespace and newlines at end of file on save
-autocmd BufWritePre * %s/\s\+$//e
-autocmd BufWritepre * %s/\n\+\%$//e
+"Deletes all trailing whitespace and newlines at end of file
+nnoremap <S-Z><S-X> :%s/\s\+$//e<CR>:%s/\n\+\%$//e<CR>
+
+"Highlight all trailing whitespace and newlines
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()

@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+# Set main external monitor above laptop monitor
+xrandr --output eDP-1 --auto --below DP-1
+
 # Set background image
 setbg /home/en0cs/Pictures/backgrounds
+
+# Set brightness to same as previously
+bright-control same
 
 # Connect to VPN
 piactl connect
