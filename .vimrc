@@ -1,9 +1,9 @@
 let mapleader=","
 
 "Tabs appear 4 spaces
-set tabstop=4
-set shiftwidth=4
-set expandtab
+"set tabstop=4
+"set shiftwidth=4
+"set expandtab
 
 "Map actual tab to Shift-Tab
 inoremap <S-Tab> <C-V><Tab>
@@ -49,16 +49,17 @@ set laststatus=2
 set statusline=%<%f\ %h%m%r%=%-14.(%{wordcount().words},%l,%c%V%)\ %P
 
 "Display cursor line number
-set number
+"set number
 
 "Display line numbers relative to cursor
-set relativenumber
+"set relativenumber
 
 "Display as much as possible of line that doesn't fit
 set display+=lastline
 
 "Nice colour theme
-colo my-slate
+"colo my-slate
+colo desert
 
 "Don't wrap a line in the middle of a word
 set linebreak
@@ -131,13 +132,13 @@ set com=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,b:-
 set formatoptions+=roln
 
 " Compile document, be it LaTeX/markdown/etc.
-map <leader>c :w! \| !compiler <c-r>% tmp<CR>
-map <leader>C :w! \| !compiler <c-r>% <CR>
+map <leader>c :w! \| !compiler <c-r>\'%' tmp<CR>
+map <leader>C :w! \| !compiler <c-r>\'%' <CR>
 
 " Open corresponding .pdf/.html or preview
-map <leader>, :!opout <c-r>% tmp<CR><CR>
-map <leader>. :!opout <c-r>% <CR><CR>
-map <leader>p :!opout <c-r>% tmp -pres<CR><CR>
+map <leader>, :!opout <c-r>\'%' tmp<CR><CR>
+map <leader>. :!opout <c-r>\'%' <CR><CR>
+map <leader>p :!opout <c-r>\'%' tmp -pres<CR><CR>
 
 "Set tags file location
 set tags+=$HOME/.vim/tags
@@ -146,14 +147,14 @@ set tags+=$HOME/.vim/tags
 nnoremap <leader>t :!ctags -f ~/.vim/tags --tag-relative=yes -R ./*<CR>
 
 "Todo
-autocmd BufRead,BufNewFile .todo* set autoindent
-autocmd BufRead,BufNewFile .todo* set cursorline
+autocmd BufRead,BufNewFile *.todo* set autoindent
+autocmd BufRead,BufNewFile *.todo* set cursorline
 function! DoneToggle()
 	s/^\(\s*\)- /\1[@]/e 1
 	s/^\(\s*\)⚫/\1- /e 1
 	s/^\(\s*\)\[@\]/\1⚫/e 1
 endfunc
-autocmd BufRead,BufNewFile .todo* nnoremap <CR> :call DoneToggle()<CR>:noh<CR>j$
+autocmd BufRead,BufNewFile *.todo* nnoremap <CR> :call DoneToggle()<CR>:noh<CR>j$
 
 "Notepad
 autocmd BufRead,BufNewFile .notepad set autoindent
@@ -174,3 +175,6 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
+
+"Toggle line numbers
+nnoremap <leader>n :setlocal number! relativenumber!<CR>
